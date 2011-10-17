@@ -2,6 +2,15 @@
 ;; Remove splash screen
 (setq inhibit-splash-screen t)
 
+;; Don't open new frames all the time
+(setq ns-pop-up-frames 'nil)
+
+;; Don't litter auto-save turds all over the file system
+(setq backup-directory-alist
+     `((".*" . ,temporary-file-directory)))
+(setq auto-save-file-name-transforms
+     `((".*" ,temporary-file-directory t)))
+
 ;; Allow mouse wheel scrolling
 (mouse-wheel-mode t) 
 
@@ -23,12 +32,15 @@
 
 (global-hl-line-mode 1)
 
+;; Ido mode
+(require 'ido)
+(setq ido-enable-flex-matching t)
+(setq ido-everywhere t)
+(ido-mode 1)
+
 ;; Color themes
 (require 'color-theme)
 (color-theme-high-contrast)
-
-;; Maintain keyword highlighting on current line
-(set-face-foreground 'hl-line nil)
 
 ;; We sure want to use bash.
 (setq explicit-shell-file-name "/bin/bash")
@@ -37,13 +49,15 @@
 (autoload 'ansi-color-for-comint-mode-on "ansi-color" nil t)
 (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
 
+;; I'm using Obj-C more often than C
+(add-to-list 'auto-mode-alist '("\\.h$" . objc-mode))
+
 ;; Based on http://infolab.stanford.edu/~manku/dotemacs.html
 (autoload 'ruby-mode "ruby-mode"
     "Mode for editing ruby source files")
 (add-to-list 'auto-mode-alist '("\\.rb$" . ruby-mode))
 (add-to-list 'auto-mode-alist '("\\.rxml$" . ruby-mode))
 (add-to-list 'auto-mode-alist '("\\.rhtml$" . ruby-mode))
-(add-to-list 'auto-mode-alist '("\\.rake$" . ruby-mode))
 (add-to-list 'interpreter-mode-alist '("ruby" . ruby-mode))
 (autoload 'run-ruby "inf-ruby"
     "Run an inferior Ruby process")
@@ -62,30 +76,22 @@
 ;; uncomment the next line if you want syntax highlighting
 (add-hook 'ruby-mode-hook 'turn-on-font-lock)
 
+;; javascript mode
+(add-to-list 'auto-mode-alist '("\\.js\\'" . javascript-mode))
+(autoload 'javascript-mode "javascript" nil t)
+
+;; mutt mode
+(load "~/.elisp/mutt.el") 
+(server-start)
+(add-to-list 'auto-mode-alist '("/mutt" . mutt-mode))
+
 (global-set-key "\C-x\C-m" 'execute-extended-command)
 (global-set-key "\C-c\C-m" 'execute-extended-command)
 (global-set-key "\C-x\C-k" 'kill-region)
 (global-set-key "\C-c\C-k" 'kill-region)
 (global-set-key [M-return] 'next-buffer)
 (global-set-key [C-return] 'previous-buffer)
-(global-set-key [C-.] 'next-buffer)
-(global-set-key [C-,] 'previous-buffer)
-
 (defalias 'qrr 'query-replace-regexp)
 
-(put 'upcase-region 'disabled nil)
-
-(put 'downcase-region 'disabled nil)
-(custom-set-variables
-  ;; custom-set-variables was added by Custom.
-  ;; If you edit it by hand, you could mess it up, so be careful.
-  ;; Your init file should contain only one such instance.
-  ;; If there is more than one, they won't work right.
- '(column-number-mode t)
- '(show-paren-mode t))
-(custom-set-faces
-  ;; custom-set-faces was added by Custom.
-  ;; If you edit it by hand, you could mess it up, so be careful.
-  ;; Your init file should contain only one such instance.
-  ;; If there is more than one, they won't work right.
- '(default ((t (:inherit nil :stipple nil :background "white" :foreground "black" :inverse-video nil :box nil :strike-through nil :overline nil :underline nil :slant normal :weight normal :height 113 :width normal :foundry "monotype" :family "Andale Mono")))))
+(setq-default ispell-program-name "aspell")
+(ns-toggle-fullscreen)
